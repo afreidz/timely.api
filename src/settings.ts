@@ -30,10 +30,11 @@ router.put("/", async (req: SettingsRequest, res) => {
     {
       $set: {
         owner: req.owner,
+        rounding: req.body.rounding,
         theme: req.body.theme ?? "dark",
         endofday: req.body.endofday || "",
-        gapless: req.body.gapless || false,
         showHours: req.body.showHours || [],
+        autoSnap: req.body.autoSnap || false,
         autoStop: req.body.autoStop || false,
         startofday: req.body.startofday || "",
         multipleRunning: req.body.multipleRunning || false,

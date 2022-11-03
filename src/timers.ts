@@ -53,6 +53,25 @@ router.put("/:id", async (req: TimerRequest, res) => {
   res.status(result instanceof MongoServerError ? 500 : 200).json(result);
 });
 
+router.get("/range/:start/:end", async (req: TimerRequest, res) => {
+  const start = new Date(+req.params.start);
+  const end = new Date(+req.params.end);
+
+  const result = await req.collection
+    ?.find({
+      $and: [
+        {
+          owner: req.owner,
+          start: { $gte: start, $lte: end },
+        },
+      ],
+    })
+    .toArray();
+  res
+    .status(result instanceof MongoServerError ? 500 : 200)
+    .json(result instanceof MongoServerError ? [] : result);
+});
+
 router.get("/date/:ms", async (req: TimerRequest, res) => {
   const start = new Date(+req.params.ms);
   start.setHours(0);
