@@ -8,7 +8,7 @@ import projects from "./projects";
 import settings from "./settings";
 
 const app = express();
-const port = 3000;
+const port = process.env.APP_PORT || 8080;
 
 app.use(cors({ origin: "http://localhost:5173" }));
 app.use(passport.initialize());
