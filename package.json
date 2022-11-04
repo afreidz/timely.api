@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "nodemon src/index.ts"
+    "start": "nodemon src/index.ts",
+    "dev": "nodemon --require dotenv/config src/index.ts dotenv_config_path=.env.dev"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +15,7 @@
     "@azure/cosmos": "^3.17.1",
     "body-parser": "^1.20.1",
     "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "mongodb": "^4.11.0",
     "morgan": "^1.10.0",
