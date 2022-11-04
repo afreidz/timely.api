@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "nodemon src/index.ts",
+    "start": "node dist/index.js",
     "dev": "nodemon --require dotenv/config src/index.ts dotenv_config_path=.env.dev"
   },
   "keywords": [],
