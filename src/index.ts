@@ -16,14 +16,12 @@ passport.use(auth.strategy);
 app.use(express.json());
 app.use(morgan("dev"));
 
-app.use("/", auth.protect());
-
-app.get("/auth_test", (req, res) => {
-  res.status(200).json(req.authInfo);
+app.get("/health", (_, res) => {
+  res.status(200).json({ msg: "alive" });
 });
 
-app.use("/timers", timers);
-app.use("/projects", projects);
-app.use("/settings", settings);
+app.use("/timers", auth.protect(), timers);
+app.use("/projects", auth.protect(), projects);
+app.use("/settings", auth.protect(), settings);
 
 app.listen(port, () => console.log("Listening on port", port));

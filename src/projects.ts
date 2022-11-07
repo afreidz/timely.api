@@ -1,4 +1,5 @@
 import * as db from "./db";
+import sanitize from "mongo-sanitize";
 import { Request, Router } from "express";
 import { ITokenPayload } from "passport-azure-ad";
 import { Collection, MongoServerError, ObjectId } from "mongodb";
@@ -18,33 +19,43 @@ router.use("/", async (req: ProjectRequest, _, next) => {
 });
 
 router.get("/", async (req: ProjectRequest, res) => {
+  await db.connect();
   const result = await req.collection?.find({ owner: req.owner }).toArray();
   res.status(result instanceof MongoServerError ? 500 : 200).json(result);
 });
 
 router.post("/", async (req: ProjectRequest, res) => {
+  await db.connect();
+
+  const { name, color, budget, archived } = sanitize(req.body);
+  console.log({ name, color, budget, archived });
+
   const result = await req.collection?.insertOne({
+    name,
+    color,
+    budget,
+    archived,
     owner: req.owner,
-    name: req.body.name,
-    color: req.body.color,
-    budget: req.body.budget,
-    archived: req.body.archived || false,
   });
   res.status(result instanceof MongoServerError ? 500 : 200).json(result);
 });
 
 router.put("/:id", async (req: ProjectRequest, res) => {
+  await db.connect();
+  const id = sanitize(req.params.id);
+  const { name, color, budget, archived } = sanitize(req.body);
+
   const result = await req.collection?.findOneAndUpdate(
     {
-      _id: new ObjectId(req.params.id),
+      _id: new ObjectId(id),
       owner: req.owner,
     },
     {
       $set: {
-        name: req.body.name,
-        color: req.body.color,
-        budget: req.body.budget,
-        archived: req.body.archived || false,
+        name,
+        color,
+        budget,
+        archived,
       },
     }
   );
@@ -53,14 +64,17 @@ router.put("/:id", async (req: ProjectRequest, res) => {
 });
 
 router.delete("/", async (req: ProjectRequest, res) => {
+  await db.connect();
   const result = await req.collection?.deleteMany({ owner: req.owner });
   res.status(result instanceof MongoServerError ? 500 : 200).json(result);
 });
 
 router.delete("/:id", async (req: ProjectRequest, res) => {
+  await db.connect();
+  const id = sanitize(req.params.id);
   const result = await req.collection?.deleteOne({
     owner: req.owner,
-    _id: new ObjectId(req.params.id),
+    _id: new ObjectId(id),
   });
   res.status(result instanceof MongoServerError ? 500 : 200).json(result);
 });
