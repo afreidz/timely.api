@@ -1,4 +1,4 @@
-import * as db from "./db";
+import getDbClient from "./db";
 import sanitize from "mongo-sanitize";
 import { Request, Router } from "express";
 import { ITokenPayload } from "passport-azure-ad";
@@ -12,14 +12,13 @@ export interface TimerRequest extends Request {
 }
 
 router.use("/", async (req: TimerRequest, _, next) => {
-  await db.connect();
+  const db = await getDbClient();
   req.owner = (req.authInfo as ITokenPayload).oid || "";
-  req.collection = db.client.collection("timers");
+  req.collection = db.collection("timers");
   return next();
 });
 
 router.get("/", async (req: TimerRequest, res) => {
-  await db.connect();
   const result = await req.collection?.find({ owner: req.owner }).toArray();
   res
     .status(result instanceof MongoServerError ? 500 : 200)
@@ -27,7 +26,6 @@ router.get("/", async (req: TimerRequest, res) => {
 });
 
 router.post("/", async (req: TimerRequest, res) => {
-  await db.connect();
   const { projectId, task, start } = sanitize(req.body);
 
   const result = await req.collection?.insertOne({
@@ -40,7 +38,6 @@ router.post("/", async (req: TimerRequest, res) => {
 });
 
 router.put("/:id", async (req: TimerRequest, res) => {
-  await db.connect();
   const id = sanitize(req.params.id);
   const { projectId, task, start, afterhours, end } = sanitize(req.body);
 
@@ -63,7 +60,6 @@ router.put("/:id", async (req: TimerRequest, res) => {
 });
 
 router.get("/range/:start/:end", async (req: TimerRequest, res) => {
-  await db.connect();
   const end = new Date(+sanitize(req.params.end));
   const start = new Date(+sanitize(req.params.start));
 
@@ -83,7 +79,6 @@ router.get("/range/:start/:end", async (req: TimerRequest, res) => {
 });
 
 router.get("/date/:ms", async (req: TimerRequest, res) => {
-  await db.connect();
   const start = new Date(+sanitize(req.params.ms));
   start.setHours(0);
   start.setMinutes(0);
@@ -108,7 +103,6 @@ router.get("/date/:ms", async (req: TimerRequest, res) => {
 });
 
 router.get("/project/:pid", async (req: TimerRequest, res) => {
-  await db.connect();
   const projectId = sanitize(req.params.pid);
   const result = await req.collection
     ?.find({
@@ -126,13 +120,11 @@ router.get("/project/:pid", async (req: TimerRequest, res) => {
 });
 
 router.delete("/", async (req: TimerRequest, res) => {
-  await db.connect();
   const result = await req.collection?.deleteMany({ owner: req.owner });
   res.status(result instanceof MongoServerError ? 500 : 200).json(result);
 });
 
 router.delete("/:id", async (req: TimerRequest, res) => {
-  await db.connect();
   const id = sanitize(req.params.id);
   const result = await req.collection?.deleteOne({
     owner: req.owner,

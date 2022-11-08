@@ -1,4 +1,4 @@
-import * as db from "./db";
+import getDbClient from "./db";
 import sanitize from "mongo-sanitize";
 import { Request, Router } from "express";
 import { ITokenPayload } from "passport-azure-ad";
@@ -12,21 +12,18 @@ export interface SettingsRequest extends Request {
 }
 
 router.use("/", async (req: SettingsRequest, _, next) => {
-  await db.connect();
+  const db = await getDbClient();
   req.owner = (req.authInfo as ITokenPayload).oid || "";
-  req.collection = db.client.collection("settings");
+  req.collection = db.collection("settings");
   return next();
 });
 
 router.get("/", async (req: SettingsRequest, res) => {
-  await db.connect();
   const result = await req.collection?.findOne({ owner: req.owner });
   res.status(result instanceof MongoServerError ? 500 : 200).json(result);
 });
 
 router.put("/", async (req: SettingsRequest, res) => {
-  await db.connect();
-
   const {
     theme,
     rounding,

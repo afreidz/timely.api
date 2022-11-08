@@ -1,0 +1,31 @@
+port:
+  $env:
+    default: 3000
+    production: 8080
+tennant: e85feadf-11e7-47bb-a160-43b98dcc96f1
+api_client_id: e3e6d70e-ff2b-4c9a-b773-1bd7d9919593
+issuer_url:
+  port: 443
+  path: /v2.0
+  proto: https
+  host: login.microsoftonline.com
+meta_url:
+  port: 443
+  proto: https
+  host: login.microsoftonline.com
+  path: /v2.0/.well-known/openid-configuration
+db_url:
+  url:
+    port: 10255
+    proto: mongodb
+    host: timely-dev.mongo.cosmos.azure.com
+    query: '?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@timely-dev@'
+  user: timely-dev
+  pass: 'enc:1:wy4ECQMIrtYJH4bdUc7gECqJxSRUtVWFwVFOCArYM5mUA+PFKdZrvPivV2n4IPAw0pIB8ZSFJGX/dA/EPXntAINjAkqtxSDUfXsng5lUd9y44iuyyB7ax8I8J6FefRj1myEqhCOFoW0PieV8rX2qNX86wTeclSY84eJb8wsVQ+9v0E4iEaTMu2k7ITaUkRfAuatAoK24vBupfoeFidYBLZxb82XeEnknAmko1Wzoj0Qqz8K3oJzLGt+jmqTPTyXSs9lvsw===FB6h'
+valid_origins:
+  $env:
+    default:
+      - http://localhost:5173
+    production:
+      - https://timely.hsalux.app
+      - https://victorious-ground-0bf6c8010.2.azurestaticapps.net

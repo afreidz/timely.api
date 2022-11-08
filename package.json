@@ -5,17 +5,18 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.js",
-    "dev": "nodemon --require dotenv/config src/index.ts dotenv_config_path=.env.dev"
+    "start": "APP_CONFIG_SCHEMA=$(npx @app-config/cli create-schema --format json) APP_CONFIG=$(NODE_ENV=production npx @app-config/cli create --format json --secrets --agent=false) node dist/index.js && echo node -v",
+    "dev": "nodemon src/index.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@app-config/encryption": "^2.8.5",
+    "@app-config/main": "^2.8.5",
     "@azure/cosmos": "^3.17.1",
     "body-parser": "^1.20.1",
     "cors": "^2.8.5",
-    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "mongo-sanitize": "^1.1.0",
     "mongodb": "^4.11.0",

@@ -6,22 +6,33 @@ import * as auth from "./auth";
 import passport from "passport";
 import projects from "./projects";
 import settings from "./settings";
+import { loadConfig } from "@app-config/main";
+import { Config } from "./@types/lcdev__app-config";
 
+let config: Config;
 const app = express();
-const port = process.env.APP_PORT || 8080;
 
-app.use(cors({ origin: "http://localhost:5173" }));
-app.use(passport.initialize());
-passport.use(auth.strategy);
-app.use(express.json());
-app.use(morgan("dev"));
+loadConfig()
+  .then((c) => {
+    config = c;
+    app.use(cors({ origin: config.valid_origins }));
+    app.use(passport.initialize());
+    return auth.generateStrategy();
+  })
+  .then((strategy) => {
+    passport.use(strategy);
+    app.use(express.json());
+    app.use(morgan("dev"));
 
-app.get("/health", (_, res) => {
-  res.status(200).json({ msg: "alive" });
-});
+    app.get("/health", (_, res) => {
+      res.status(200).json({ msg: "alive" });
+    });
 
-app.use("/timers", auth.protect(), timers);
-app.use("/projects", auth.protect(), projects);
-app.use("/settings", auth.protect(), settings);
+    app.use("/timers", auth.protect(), timers);
+    app.use("/projects", auth.protect(), projects);
+    app.use("/settings", auth.protect(), settings);
 
-app.listen(port, () => console.log("Listening on port", port));
+    app.listen(config.port, () =>
+      console.log("Listening on port", config.port)
+    );
+  });
