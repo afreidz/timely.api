@@ -2,7 +2,7 @@
   "name": "api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "start": "APP_CONFIG_SCHEMA=$(npx @app-config/cli create-schema --format json) APP_CONFIG=$(NODE_ENV=production npx @app-config/cli create --format json --secrets --agent=false) node dist/index.js && echo node -v",
