@@ -1,3 +1,4 @@
+import cors from "./cors";
 import morgan from "morgan";
 import express from "express";
 import timers from "./timers";
@@ -9,6 +10,7 @@ import settings from "./settings";
 const app = express();
 const port = process.env.AC_PORT;
 
+app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 
