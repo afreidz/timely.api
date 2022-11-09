@@ -14,6 +14,6 @@ function checkOrigin(
 
 export default function () {
   return cors({
-    origin: checkOrigin,
+    origin: "*",
   });
 }
