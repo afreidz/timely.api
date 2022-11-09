@@ -1,4 +1,4 @@
-import cors from "cors";
+import cors from "./cors";
 import morgan from "morgan";
 import express from "express";
 import timers from "./timers";
@@ -6,33 +6,32 @@ import * as auth from "./auth";
 import passport from "passport";
 import projects from "./projects";
 import settings from "./settings";
-import { loadConfig } from "@app-config/main";
-import { Config } from "./@types/lcdev__app-config";
 
-let config: Config;
 const app = express();
+const port = process.env.AC_PORT;
 
-loadConfig()
-  .then((c) => {
-    config = c;
-    app.use(cors({ origin: config.valid_origins }));
-    app.use(passport.initialize());
-    return auth.generateStrategy();
-  })
-  .then((strategy) => {
-    passport.use(strategy);
-    app.use(express.json());
-    app.use(morgan("dev"));
+function checkOrigin(
+  origin: string | undefined,
+  cb: (err: Error | null, o?: string) => void
+) {
+  if (origin?.startsWith("http://localhost:")) return cb(null, origin);
+  if (origin === process.env.AC_CORS_ORIGIN) return cb(null, origin);
+  return cb(new Error("Origin not allowed"));
+}
 
-    app.get("/health", (_, res) => {
-      res.status(200).json({ msg: "alive" });
-    });
+app.use(cors());
+app.use(express.json());
+app.use(morgan("dev"));
 
-    app.use("/timers", auth.protect(), timers);
-    app.use("/projects", auth.protect(), projects);
-    app.use("/settings", auth.protect(), settings);
+app.use(passport.initialize());
+passport.use(auth.strategy);
 
-    app.listen(config.port, () =>
-      console.log("Listening on port", config.port)
-    );
-  });
+app.get("/health", (_, res) => {
+  res.status(200).json({ msg: "alive" });
+});
+
+app.use("/timers", auth.protect(), timers);
+app.use("/projects", auth.protect(), projects);
+app.use("/settings", auth.protect(), settings);
+
+app.listen(port, () => console.log("Listening on port", port));

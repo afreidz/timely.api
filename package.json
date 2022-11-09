@@ -5,15 +5,12 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "start": "APP_CONFIG_SCHEMA=$(npx @app-config/cli create-schema --format json) APP_CONFIG=$(NODE_ENV=production npx @app-config/cli create --format json --secrets --agent=false) node dist/index.js && echo node -v",
-    "dev": "nodemon src/index.ts"
+    "dev": "nodemon -r dotenv/config src/index.ts dotenv_config_path=.env.local"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@app-config/encryption": "^2.8.5",
-    "@app-config/main": "^2.8.5",
     "@azure/cosmos": "^3.17.1",
     "body-parser": "^1.20.1",
     "cors": "^2.8.5",
@@ -36,6 +33,7 @@
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.41.0",
     "@typescript-eslint/parser": "^5.41.0",
+    "dotenv": "^16.0.3",
     "eslint": "^8.26.0",
     "nodemon": "^2.0.20",
     "ts-node": "^10.9.1",
