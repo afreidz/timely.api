@@ -51,8 +51,8 @@ router.put("/:id", async (req: TimerRequest, res) => {
         projectId,
         task: task || "Timer",
         start: new Date(start),
+        afterhours: afterhours == true,
         end: end ? new Date(end) : null,
-        afterhours: new Boolean(afterhours),
       },
     }
   );
