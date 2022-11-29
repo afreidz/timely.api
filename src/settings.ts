@@ -32,6 +32,7 @@ router.put("/", async (req: SettingsRequest, res) => {
     autoStop,
     showHours,
     startofday,
+    hideInReports,
     multipleRunning,
   } = sanitize(req.body);
 
@@ -50,6 +51,7 @@ router.put("/", async (req: SettingsRequest, res) => {
         owner: req.owner,
         theme: theme ?? "dark",
         showHours: showHours || [],
+        hideInReports: hideInReports || [],
       },
     },
     { upsert: true }
