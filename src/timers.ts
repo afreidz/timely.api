@@ -20,6 +20,7 @@ router.use("/", async (req: TimerRequest, _, next) => {
 
 router.get("/", async (req: TimerRequest, res) => {
   const result = await req.collection?.find({ owner: req.owner }).toArray();
+  result?.sort((a, b) => +new Date(a.start) - +new Date(b.start));
   res
     .status(result instanceof MongoServerError ? 500 : 200)
     .json(result instanceof MongoServerError ? [] : result);
@@ -73,6 +74,9 @@ router.get("/range/:start/:end", async (req: TimerRequest, res) => {
       ],
     })
     .toArray();
+
+  result?.sort((a, b) => +new Date(a.start) - +new Date(b.start));
+
   res
     .status(result instanceof MongoServerError ? 500 : 200)
     .json(result instanceof MongoServerError ? [] : result);
@@ -97,6 +101,9 @@ router.get("/date/:ms", async (req: TimerRequest, res) => {
       ],
     })
     .toArray();
+
+  result?.sort((a, b) => +new Date(a.start) - +new Date(b.start));
+
   res
     .status(result instanceof MongoServerError ? 500 : 200)
     .json(result instanceof MongoServerError ? [] : result);
@@ -114,6 +121,9 @@ router.get("/project/:pid", async (req: TimerRequest, res) => {
       ],
     })
     .toArray();
+
+  result?.sort((a, b) => +new Date(a.start) - +new Date(b.start));
+
   res
     .status(result instanceof MongoServerError ? 500 : 200)
     .json(result instanceof MongoServerError ? [] : result);
