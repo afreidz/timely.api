@@ -6,6 +6,7 @@ import * as auth from "./auth";
 import passport from "passport";
 import projects from "./projects";
 import settings from "./settings";
+import forecasts from "./forecasts";
 
 const app = express();
 const port = process.env.AC_PORT;
@@ -24,5 +25,6 @@ app.get("/health", (_, res) => {
 app.use("/timers", auth.protect(), timers);
 app.use("/projects", auth.protect(), projects);
 app.use("/settings", auth.protect(), settings);
+app.use("/forecasts", auth.protect(), forecasts);
 
 app.listen(port, () => console.log("Listening on port", port));
